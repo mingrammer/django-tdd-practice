@@ -35,16 +35,25 @@ class NewVisitorTest(unittest.TestCase):
         # Type the other task
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
-        self.assertTrue(
-            any(row.text == '1: Buy a bike' for row in rows)
-        )
+        self.assertIn('1: Buy a bike', [row.text for row in rows])
 
-        self.fail('Finish the test!')
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Buy a car')
+        inputbox.send_keys(Keys.ENTER)
+
         # The page will be reloaded again
         # There are two items in list
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn('1: Buy a bike', [row.text for row in rows])
+        self.assertIn('2: Buy a car', [row.text for row in rows])
+
+        inputbox = self.browser.find_element_by_id('id_new_item')
+
         # Generate url for the task list
         # The url should has description
 
+        self.fail('Finish the test!')
         # When a user access to the url, he/she can view the task list
 
 

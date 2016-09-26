@@ -38,36 +38,6 @@ class HomePageTest(TestCaseWithCSRF):
 
         self.assertEqualExceptCSRF(response.content.decode(), expected_html)
 
-    def test_home_page_can_save_a_post_request(self):
-        request = HttpRequest()
-        request.method = 'POST'
-        request.POST['item_text'] = 'New task item'
-
-        home_page(request)
-
-        self.assertEqual(Item.objects.count(), 1)
-
-        new_item = Item.objects.first()
-
-        self.assertEqual(new_item.text, 'New task item')
-
-    def test_home_page_saves_items_when_necessary(self):
-        request = HttpRequest()
-
-        home_page(request)
-
-        self.assertEqual(Item.objects.count(), 0)
-
-    def test_home_page_redirects_after_post(self):
-        request = HttpRequest()
-        request.method = 'POST'
-        request.POST['item_text'] = 'New task item'
-
-        response = home_page(request)
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/lists/the-only-list-in-the-world')
-
 
 class ItemModelTest(TestCase):
 
@@ -106,3 +76,27 @@ class ListViewTest(TestCase):
 
         self.assertContains(response, 'item1')
         self.assertContains(response, 'item2')
+
+
+class NewListTest(TestCase):
+
+    def test_saving_a_post_request(self):
+        self.client.post(
+            '/lists/new',
+            data={'item_text': 'New task item'}
+        )
+
+        self.assertEqual(Item.objects.count(), 1)
+
+        new_item = Item.objects.first()
+
+        self.assertEqual(new_item.text, 'New task item')
+
+    def test_redirects_after_post(self):
+        response = self.client.post(
+            '/lists/new',
+            data={'item_text': 'New task item'}
+        )
+
+        self.assertRedirects(response, '/lists/the-only-list-in-the-world/')
+

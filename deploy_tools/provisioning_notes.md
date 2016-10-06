@@ -27,14 +27,12 @@ Running example on Ubuntu :
 ## Directory structure :
 Assume the user home folder is '/home/username'
 
+```
 /home/username
-|
-----sites
-    |
-    ---- SITENAME
-	 |
-	 ---- database
-	 ---- source
-         ---- static
-         ---- virtualenv
-
+    /sites
+        /SITENAME
+            /database
+            /source
+            /static
+            /virtualenv
+```

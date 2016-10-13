@@ -10,10 +10,11 @@ class ItemValidationTest(FunctionalTest):
 
         # Page is reloaded and show error message that can not add empty item
         error = self.browser.find_element_by_css_selector('.has-error')
-        self.assertEqual(error.text, 'Can not register empty item')
+
+        self.assertEqual(error.text, 'You can\'t have an empty list item')
 
         # Typing other item is processed correctly
-        self.browser.find_element_by_id('id_new_item').send_keys('Buy milk')
+        self.browser.find_element_by_id('id_new_item').send_keys('Buy milk\n')
         self.check_for_row_in_list_table('1: Buy milk')
 
         # She add empty item again intentionally
@@ -21,10 +22,12 @@ class ItemValidationTest(FunctionalTest):
 
         # Error message is shown again in list page
         self.check_for_row_in_list_table('1: Buy milk')
+
         error = self.browser.find_element_by_css_selector('.has-error')
-        self.assertEqual(error.text, 'Can not register empty item')
+
+        self.assertEqual(error.text, 'You can\'t have an empty list item')
 
         # Register non-empty item is valid
-        self.browser.find_element_by_id('id_new_item').send_keys('Make tea')
+        self.browser.find_element_by_id('id_new_item').send_keys('Make tea\n')
         self.check_for_row_in_list_table('1: Buy milk')
         self.check_for_row_in_list_table('2: Make tea')

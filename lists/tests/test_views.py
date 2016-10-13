@@ -1,16 +1,16 @@
 import re
 
 from django.core.urlresolvers import resolve
-from django.test import TestCase
 from django.http import HttpRequest
 from django.template.loader import render_to_string
+from django.test import TestCase
+from django.utils.html import escape
 
 from lists.models import Item, List
 from lists.views import home_page
 
 
 class TestCaseWithCSRF(TestCase):
-
     @staticmethod
     def remove_csrf(html):
         csrf_regex = r'<input[^>]+csrfmiddlewaretoken[^>]+>'
@@ -24,7 +24,6 @@ class TestCaseWithCSRF(TestCase):
 
 
 class HomePageTest(TestCaseWithCSRF):
-
     def test_root_url_resolves_to_home_page_view(self):
         found = resolve('/')
         self.assertEqual(found.func, home_page)
@@ -40,7 +39,6 @@ class HomePageTest(TestCaseWithCSRF):
 
 
 class ListViewTest(TestCase):
-
     def test_uses_list_template(self):
         list_ = List.objects.create()
 
@@ -68,7 +66,6 @@ class ListViewTest(TestCase):
 
 
 class NewListTest(TestCase):
-
     def test_saving_a_post_request(self):
         self.client.post(
             '/lists/new',
@@ -88,11 +85,27 @@ class NewListTest(TestCase):
         )
 
         new_list = List.objects.first()
+
         self.assertRedirects(response, '/lists/%d/' % (new_list.id,))
+
+    def test_validation_errors_are_sent_back_to_home_page_template(self):
+        response = self.client.post('/lists/new', data={'item_text': ''})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'home.html')
+
+        expected_error = escape('You can\'t have an empty list item')
+
+        self.assertContains(response, expected_error)
+
+    def test_invalid_list_items_arent_saved(self):
+        self.client.post('/lists/new', data={'item_text': ''})
+
+        self.assertEqual(List.objects.count(), 0)
+        self.assertEqual(Item.objects.count(), 0)
 
 
 class NewItemTest(TestCase):
-
     def test_can_save_a_post_request_to_an_existing_list(self):
         correct_list = List.objects.create()
 

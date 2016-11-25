@@ -45,8 +45,8 @@ class NewVisitorTest(FunctionalTest):
 
         # New virtual user entered site
 
-        ## prevents the inflowing the edith's information through cookie
-        ## using browser session.
+        # prevents the inflowing the edith's information through cookie
+        # using browser session.
         self.browser.quit()
         self.browser = webdriver.Firefox()
 

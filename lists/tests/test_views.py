@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 from django.test import TestCase
 from django.utils.html import escape
 
+from lists.forms import ItemForm
 from lists.models import Item, List
 from lists.views import home_page
 
@@ -24,18 +25,15 @@ class TestCaseWithCSRF(TestCase):
 
 
 class HomePageTest(TestCaseWithCSRF):
-    def test_root_url_resolves_to_home_page_view(self):
-        found = resolve('/')
-        self.assertEqual(found.func, home_page)
+    def test_home_page_returns_home_template(self):
+        response = self.client.get('/')
 
-    def test_home_page_returns_correct_html(self):
-        request = HttpRequest()
+        self.assertTemplateUsed(response, 'home.html')
 
-        response = home_page(request)
+    def test_home_page_uses_item_form(self):
+        response = self.client.get('/')
 
-        expected_html = render_to_string('home.html', request=request)
-
-        self.assertEqualExceptCSRF(response.content.decode(), expected_html)
+        self.assertIsInstance(response.context['form'], ItemForm)
 
 
 class ListViewTest(TestCase):

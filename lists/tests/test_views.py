@@ -1,14 +1,10 @@
 import re
 
-from django.core.urlresolvers import resolve
-from django.http import HttpRequest
-from django.template.loader import render_to_string
 from django.test import TestCase
 from django.utils.html import escape
 
 from lists.forms import ItemForm
 from lists.models import Item, List
-from lists.views import home_page
 
 
 class TestCaseWithCSRF(TestCase):

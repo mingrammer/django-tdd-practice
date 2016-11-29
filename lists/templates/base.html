@@ -11,7 +11,7 @@
                 <div class="col-md-6 col-md-offset-3 jumbotron">
                     <div class="text-center">
                         <h1>{% block header_text %}{% endblock %}</h1>
-                        <form method="post" action="{% block form_action %}{% endblock %}">
+                        <form method="post" action="{% block form_action %}{% endblock %}" novalidate>
                             {% csrf_token %}
                             {{ form.text }}
                             {% if form.errors %}
